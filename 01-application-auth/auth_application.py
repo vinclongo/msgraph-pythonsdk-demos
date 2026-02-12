@@ -1,5 +1,3 @@
-import asyncio 
-
 from azure.identity import ClientSecretCredential
 from msgraph import GraphServiceClient
 from config import Config
