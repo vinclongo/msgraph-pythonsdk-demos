@@ -20,6 +20,8 @@ async def get_user_by_id(client, user_id):
     print("=" * 50)
     
     user = await client.users.by_user_id(user_id).get()
+
+    
     if user:
         print(f"  Name: {user.display_name}")
         print(f"  Email: {user.user_principal_name}")
@@ -28,7 +30,7 @@ async def get_user_by_id(client, user_id):
 async def main():
     """Main demo function."""
     print("=" * 50)
-    print("Microsoft Graph - Application Auth Demo")
+    print("Microsoft Graph - Delegated Auth Demo")
     print("=" * 50)
 
     # user_if from a CDX tenant demo
@@ -39,8 +41,8 @@ async def main():
         
         # chose the authN Mode: device_code or browser
         
-        #auth = DelegatedAuthProvider(auth_type = "device_code")
-        auth = DelegatedAuthProvider(auth_type = "browser")
+        auth = DelegatedAuthProvider(auth_type = "device_code")
+        #auth = DelegatedAuthProvider(auth_type = "browser")
 
         client = auth.get_client()
         

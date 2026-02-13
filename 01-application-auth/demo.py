@@ -34,8 +34,9 @@ async def main():
     user_id = "45674885-ff25-423b-84c8-f95f949c443d"
     
     try:
-        # Setup authentication (one line!)
+        # Setup authentication
         auth = ApplicationAuthProvider()
+        
         client = auth.get_client()
         
         # Get users functionalities
