@@ -1,5 +1,6 @@
 """Demo script for placeholder meeting sender (Multiple Time Slots)."""
 import asyncio
+import csv
 from auth_delegated import DelegatedAuthProvider
 from msgraph.generated.models.event import Event
 from msgraph.generated.models.item_body import ItemBody
@@ -10,35 +11,88 @@ from msgraph.generated.models.email_address import EmailAddress
 from msgraph.generated.models.attendee_type import AttendeeType
 from kiota_abstractions.base_request_configuration import RequestConfiguration
 
-# =======================================================
-# INPUT VARIABLES - CHANGE THESE FOR YOUR MEETINGS
-# =======================================================
-ATTENDEES_LIST = [
-    ("Grady Archie", "GradyA@M365x89922257.onmicrosoft.com"),
-    ("Lidia Holloway", "LidiaH@M365x89922257.onmicrosoft.com"),
-    ("Diego Siciliani", "DiegoS@M365x89922257.onmicrosoft.com")
-]
 
-MEETING_SUBJECT = "PLACEHOLDER - VERY IMPORTANT CLIENT"
-MEETING_BODY = """
-<h2>PLACEHOLDER - VERY IMPORTANT CLIENT</h2>
-<p>Waiting for client confirmation.</p>
-"""
+# ======================================================
+# UTILITY FUNCTIONS - READ INPUTS
+# ======================================================
 
-# MULTIPLE TIME SLOTS - Recipients get ALL these invites
-TIME_SLOTS = [
-    {"start": "2026-02-20T10:00:00", "end": "2026-02-20T11:00:00", "label": "Slot 1"},
-    {"start": "2026-02-20T14:00:00", "end": "2026-02-20T15:00:00", "label": "Slot 2"}, 
-    {"start": "2026-02-20T16:00:00", "end": "2026-02-20T17:00:00", "label": "Slot 3"},
-]
+def get_attendees(attendees_list):
+    """Convert attendees list to Graph Attendee objects."""
+    attendees = []
+    for name, mail in attendees_list:
+        attendee = Attendee(
+            email_address=EmailAddress(
+                address=mail,
+                name=name,
+            ),
+            type=AttendeeType.Required,
+        )
+        attendees.append(attendee)
+    return attendees
+
+
+def read_attendees(filename):
+    attendees_list = []
+
+    with open(file=filename, mode = "r") as file:
+        csvFile = csv.reader(file)
+        for attendee_info in csvFile:
+            name = attendee_info[0]
+            mail = attendee_info[1]
+            attendees_list.append((name, mail))
+    
+    attendee_objs = get_attendees(attendees_list)
+
+    return attendee_objs
+
+def read_times(filename):
+    time_slots = []
+
+    with open(file=filename, mode = "r") as file:
+        csvFile = csv.reader(file)
+        for times_info in csvFile:
+            start = times_info[0]
+            end = times_info[1]
+            label = times_info[2]
+            time_slots.append({
+                "start": start,
+                "end": end,
+                "label": label
+            })
+    return time_slots
+
+def read_meeting_info(filename):
+    subject = ""
+    body = ""
+    
+    with open(file = filename, mode = "r") as file:
+        for i, line in enumerate(file):
+            if i == 0:
+                subject = line
+            elif i == 1:
+                body = line
+            else:
+                break
+    
+    return subject, body 
+
+
+# =======================================================
+# OTHER INPUT VARIABLES  
+# =======================================================
+
 
 TIME_ZONE = "Pacific Standard Time"
+
+# =======================================================
+# SEND PLACEHOLDER FUNCTION 
 # =======================================================
 
-async def send_placeholder(client, content, attendees, start_time, end_time, slot_label):
+
+async def send_placeholder(client, meeting_subject, content, attendees, start_time, end_time, slot_label):
     """Send placeholder meeting invite to attendees."""
     request_body = Event(
-        subject=f"{MEETING_SUBJECT} ({slot_label})",
+        subject=f"{meeting_subject} ({slot_label})",
         body=ItemBody(
             content_type=BodyType.Html,
             content=f"{content}<p><strong>Time Slot: {slot_label}</strong></p>",
@@ -57,30 +111,33 @@ async def send_placeholder(client, content, attendees, start_time, end_time, slo
     print(f" {slot_label}: {result.web_link}")
     return result
 
-def get_attendees(attendees_list):
-    """Convert attendees list to Graph Attendee objects."""
-    attendees = []
-    for name, mail in attendees_list:
-        attendee = Attendee(
-            email_address=EmailAddress(
-                address=mail,
-                name=name,
-            ),
-            type=AttendeeType.Required,
-        )
-        attendees.append(attendee)
-    return attendees
+# =======================================================
+# MAIN FUNCTION
+# =======================================================
+
 
 async def main():
     """Main demo function."""
+
+    # READ INPUT VARIABLES - CHANGE FILES IN ./input FOLDER
+
+    # Attendees
+    ATTENDEES_LIST = read_attendees("./input/attendees.csv")
+    print(ATTENDEES_LIST)
+
+    # Time slots
+    TIME_SLOTS = read_times("./input/times.csv")
+    print(TIME_SLOTS)
+
+    # Meeting info
+    MEETING_SUBJECT, MEETING_BODY = read_meeting_info("./input/placeholder_info.txt")
+
     print("=" * 70)
     print(" MULTIPLE PLACEHOLDER MEETING SENDER")
     print("=" * 70)
     print(f" Recipients: {len(ATTENDEES_LIST)}")
     print(f" Time slots: {len(TIME_SLOTS)}")
     print()
-
-    attendees = get_attendees(ATTENDEES_LIST)
 
     try:
         # Setup delegated authentication
@@ -101,8 +158,9 @@ async def main():
             
             await send_placeholder(
                 client, 
+                MEETING_SUBJECT,
                 MEETING_BODY, 
-                attendees, 
+                ATTENDEES_LIST, 
                 start_time, 
                 end_time, 
                 slot["label"]
@@ -113,7 +171,7 @@ async def main():
         return 1
 
     print("\n All placeholders sent! Recipients will receive multiple invites.")
-    print("They can Accept/Decline each one independently.")
+
     return 0
 
 if __name__ == "__main__":
