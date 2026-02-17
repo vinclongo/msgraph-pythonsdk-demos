@@ -1,6 +1,7 @@
 # 02 - Delegated Authentication (Device Code / Browser)
 
-This demo shows how to call Microsoft Graph using **delegated permissions** (on behalf of a signed‑in user) with **Device Code Flow** and **Interactive Browser Flow** using the Microsoft Graph Python SDK.
+This demo shows how to call Microsoft Graph using **delegated permissions** (on behalf of a signed‑in user) with 
+**Device Code Flow** and **Interactive Browser Flow** using the Microsoft Graph Python SDK.
 
 ---
 
@@ -10,8 +11,7 @@ This demo shows how to call Microsoft Graph using **delegated permissions** (on 
 - Use `DeviceCodeCredential` (CLI/headless) and/or `InteractiveBrowserCredential` (desktop) from `azure-identity`.
 - Use `GraphServiceClient` from `msgraph-sdk`.
 - Call endpoints such as:
-  - `/me`
-  - `/users/{id}` (as the signed-in user)
+  - `/me` to retrieve signed-in user info
 
 ---
 
@@ -28,19 +28,18 @@ This demo shows how to call Microsoft Graph using **delegated permissions** (on 
     - `InteractiveBrowserCredential`
 
 - **`demo.py`**  
-  Example Graph calls (e.g., get `/me`, list messages).
+  Example Graph calls (e.g., get `/me`).
 
 ---
 
 ## 🔧 Azure AD App Registration (Delegated)
 
-1. Go to **Azure Portal** → **Entra ID** → **App registrations**.
+1. Go to **entra.microsoft.com** → **App registrations**.
 2. Select **New registration**:
-   - Name: `graph-python-delegated-auth-demo`
+   - Name: `delegated-auth-demo`
    - Supported account types: choose per scenario
    - Redirect URI:  
-     - Optional for Device Code  
-     - Required for interactive browser flows
+     - Optional for Device Code (not needed now)
 3. Click **Register**.
 
 ---
@@ -60,12 +59,12 @@ This demo shows how to call Microsoft Graph using **delegated permissions** (on 
 2. Choose **Microsoft Graph** → **Delegated permissions**.
 3. Add at minimum:
    - `User.Read`
-4. Additional common permissions:
+4. Additional common permissions (not for this demo):
    - `Mail.Read`
-   - `Calendars.Read` or `Calendars.ReadWrite`
+   - `Calendars.Read` or `Calendars.ReadWrite` 
 5. Click **Add permissions**.
 6. Optional (depending on tenant policy):
-   - **Grant admin consent** or allow user consent.
+   - **Grant admin consent** or allow user consent (check at *Entra ID > Enterprise apps > Consent and Permissions > User consent settings*)
 
 ---
 
@@ -73,17 +72,17 @@ This demo shows how to call Microsoft Graph using **delegated permissions** (on 
 
 Create a `.env` file in this folder:
 
-```env
+```ini
 CLIENT_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 TENANT_ID=yyyyyyyy-yyyy-yyyy-yyyy-yyyyyyyyyyyy
 GRAPH_SCOPES=User.Read
-````
+```
 
-Notes:
+**Notes**:
 
 *   No `CLIENT_SECRET` is required for **public client** delegated flows like Device Code.
 *   `GRAPH_SCOPES` is **space-separated**, e.g.:  
-    `User.Read Mail.Read`
+    `User.Read Mail.Read` (for our demo only `User.Read` is required)
 
 ***
 
@@ -105,8 +104,7 @@ Depending on your selected `auth_type`, you will see:
 
 Terminal output example:
 
-    To sign in, use a web browser to open the page https://microsoft.com/devicelogin
-    and enter the code ABCD-EFGH to authenticate.
+    To sign in, use a web browser to open the page https://microsoft.com/devicelogin and enter the code ABCD-EFGH to authenticate.
 
 Steps:
 
@@ -169,12 +167,6 @@ Administrator must grant consent or allow user consent.
 
 ***
 
-## 📚 References
-
-*   Add user authentication to Python apps for Microsoft Graph
-*   Device Code Flow documentation
-*   Authentication providers for Microsoft Graph Python SDK
-*   Official `msgraph-sdk-python` samples
 
 
 

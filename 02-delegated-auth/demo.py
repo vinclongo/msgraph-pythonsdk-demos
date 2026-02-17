@@ -2,30 +2,14 @@
 import asyncio
 from auth_delegated import DelegatedAuthProvider
 
+        
+async def get_me(client):
+    me = await client.me.get()
 
-async def list_users(client):
-    """Example: List all users in tenant."""
-    print("\n📋 Listing Users...")
-    print("=" * 50)
-    
-    users = await client.users.get()
-    if users and users.value:
-        for user in users.value[:10]:  # First 10
-            print(f"  • {user.display_name} ({user.user_principal_name})")
-        print(f"\nTotal: {len(users.value)} users")
-
-async def get_user_by_id(client, user_id):
-    """Example: Get specific user."""
-    print(f"\n👤 Getting User: {user_id}")
-    print("=" * 50)
-    
-    user = await client.users.by_user_id(user_id).get()
-
-    
-    if user:
-        print(f"  Name: {user.display_name}")
-        print(f"  Email: {user.user_principal_name}")
-        print(f"  Job: {user.job_title or 'N/A'}")
+    if me:
+        print(f"  Name: {me.display_name}")
+        print(f"  Email: {me.user_principal_name}")
+        print(f"  Job: {me.job_title or 'N/A'}")
 
 async def main():
     """Main demo function."""
@@ -36,9 +20,7 @@ async def main():
     # user_if from a CDX tenant demo
     user_id = "45674885-ff25-423b-84c8-f95f949c443d"
     
-    try:
-        # Setup authentication (one line!)
-        
+    try:        
         # chose the authN Mode: device_code or browser
         
         auth = DelegatedAuthProvider(auth_type = "device_code")
@@ -47,8 +29,7 @@ async def main():
         client = auth.get_client()
         
         # Get users functionalities
-        await list_users(client)
-        await get_user_by_id(client, user_id)
+        await get_me(client)
         
     except Exception as e:
         print(f"\n❌ Error: {e}")

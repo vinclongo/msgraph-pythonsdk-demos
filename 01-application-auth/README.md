@@ -1,6 +1,9 @@
 # 01 - Application Authentication (Client Credentials)
 
 This demo shows how to call Microsoft Graph using **app‑only (application) permissions** with the **client credentials flow** in Python using the Microsoft Graph SDK.
+The demo application requests the `User.Read.All` application permission to enable the following actions:
+- list all users within the directory;
+- get a user given its id.
 
 ---
 
@@ -16,7 +19,7 @@ This demo shows how to call Microsoft Graph using **app‑only (application) per
 ## 📂 Files
 
 - **`config.py`**  
-  Loads configuration from `.env`: `CLIENT_ID`, `TENANT_ID`, `CLIENT_SECRET`, `GRAPH_SCOPES`.
+  Loads configuration from `.env`: `CLIENT_ID`, `TENANT_ID`, `CLIENT_SECRET` from **Entra ID** and `GRAPH_SCOPES` (*Default*)
 
 - **`auth_application.py`**  
   Creates an app‑only `GraphServiceClient` using `ClientSecretCredential`.
@@ -26,11 +29,11 @@ This demo shows how to call Microsoft Graph using **app‑only (application) per
 
 ---
 
-## 🔧 Azure AD App Registration
+## 🔧 Entra ID App Registration
 
-1. Go to **Azure Portal** → **Entra ID** → **App registrations**.
+1. Go to **entra.microsoft.com** → **App registrations**.
 2. Select **New registration**:
-   - Name: `graph-python-application-auth-demo`
+   - Name: `application-auth-demo`
    - Supported account types: choose based on your tenant needs
    - Redirect URI: **leave empty** (not needed for client credentials)
 3. Click **Register**.
@@ -62,14 +65,14 @@ This demo shows how to call Microsoft Graph using **app‑only (application) per
 
 Create a `.env` file (based on `.env.example`):
 
-```env
+```ini
 CLIENT_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 TENANT_ID=yyyyyyyy-yyyy-yyyy-yyyy-yyyyyyyyyyyy
 CLIENT_SECRET=your-client-secret-value
 GRAPH_SCOPES=https://graph.microsoft.com/.default
-````
+```
 
-Notes:
+*Notes*:
 
 *   `GRAPH_SCOPES` must be set to `.default`  
     → This instructs Microsoft Graph to use **all application permissions** granted to the app.
@@ -89,10 +92,12 @@ python demo.py
 Expected output:
 
 *   Lists users in the tenant
-*   Shows details such as:
-    *   Display name
-    *   User principal name (UPN)
-    *   Object ID
+*   List the user with the given id within the code
+    *   Shows details such as:
+        *   Display name
+        *   User principal name (UPN)
+        *   Object ID
+
 
 ***
 
@@ -138,9 +143,5 @@ Fix: Use:
 
 ***
 
-## 📚 References
 
-*   Build Python apps with Microsoft Graph and app‑only authentication
-*   Microsoft Graph permissions reference
-*   Choose an authentication provider for Microsoft Graph
 

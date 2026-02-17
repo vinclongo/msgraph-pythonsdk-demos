@@ -11,7 +11,7 @@ authentication patterns, common scenarios, and best practices.
 
 - **Python 3.8+** installed
 - **Microsoft 365 tenant** (developer or production)
-- **Azure AD app registration** with appropriate permissions
+- **Azure AD app registration** with appropriate permissions (look at `.env.example` in each demo)
 - **Basic Python knowledge**
 
 ## 🚀 Quick Start
@@ -26,16 +26,18 @@ cd demos
 
 #### Windows
 ```bash
-python -m venv venv
-venv\Scripts\activate
+python -m venv .venv
+.venv/Scripts/Activate.ps1
 ```
 
 #### macOS/Linux
 
 ```bash
-python3 -m venv venv
-source venv/bin/activate
-3. Install Dependencies
-bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+### 3. Install Dependencies
+```bash
 pip install -r requirements.txt
 ```
