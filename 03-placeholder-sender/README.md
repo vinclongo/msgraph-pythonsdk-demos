@@ -145,13 +145,16 @@ Recipients will receive multiple invitations (one per slot) and can accept/decli
 
 ## Troubleshooting
 
-### “Need admin approval” / only “Request admin approval”
+**“Need admin approval” / only “Request admin approval”**
+
 Your tenant does not allow user consent for the requested permission(s), or the permission is considered higher impact by policy. Ask an admin to grant consent for the app, or adjust tenant consent settings.
 
-### AADSTS7000218 (asks for `client_secret` / `client_assertion`)
+**AADSTS7000218 (asks for `client_secret` / `client_assertion`)**
+
 Your app is not configured as a public client. Enable **Allow public client flows** in the app registration and ensure you’re using a delegated credential (Device Code / Interactive Browser) without a client secret.
 
-### Past dates
+**Past dates**
+
 If you use dates in the past, Outlook may behave unexpectedly. Use future time slots.
 
 ---
